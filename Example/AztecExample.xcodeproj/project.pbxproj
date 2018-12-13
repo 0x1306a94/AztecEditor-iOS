@@ -149,7 +149,7 @@
 		CC400F191E9EC04200859AB4 /* AztecUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AztecUITests.swift; sourceTree = "<group>"; };
 		CC400F1B1E9EC04200859AB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC400F241E9EC16900859AB4 /* XCTest+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTest+Extensions.swift"; sourceTree = "<group>"; };
-		E63EF92A1D36A60B00B5BA4B /* EditorDemoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorDemoController.swift; sourceTree = "<group>"; };
+		E63EF92A1D36A60B00B5BA4B /* EditorDemoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 5; lastKnownFileType = sourcecode.swift; path = EditorDemoController.swift; sourceTree = "<group>"; };
 		F122C2502072AE190018ED06 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		F1D360FC20929E6D00B4E7A5 /* WordPressEditor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WordPressEditor.xcodeproj; path = ../WordPressEditor/WordPressEditor.xcodeproj; sourceTree = "<group>"; };
 		FF149F4920E3C49A0070FECB /* imagesOverlays.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = imagesOverlays.html; sourceTree = "<group>"; };
@@ -358,7 +358,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = PZYM8XX95Q;
+						DevelopmentTeam = 87Q8YX4GE8;
 						LastSwiftMigration = 0910;
 						ProvisioningStyle = Manual;
 					};
@@ -645,7 +645,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = PZYM8XX95Q;
+				DEVELOPMENT_TEAM = 87Q8YX4GE8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -653,10 +653,10 @@
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = AztecExample;
-				PRODUCT_BUNDLE_IDENTIFIER = org.wordpress.AztecExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taihe.test.org.wordpress.AztecExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "Aztec Example Development";
+				PROVISIONING_PROFILE_SPECIFIER = "通用测试DEV";
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -675,7 +675,7 @@
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = AztecExample;
-				PRODUCT_BUNDLE_IDENTIFIER = org.wordpress.AztecExample.Release;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taihe.test.org.wordpress.AztecExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "Aztec Example Ad Hoc";
@@ -808,7 +808,7 @@
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = AztecExample;
-				PRODUCT_BUNDLE_IDENTIFIER = org.wordpress.AztecExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taihe.test.org.wordpress.AztecExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "Aztec Example Development";
@@ -889,7 +889,7 @@
 				INFOPLIST_FILE = Example/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = AztecExample;
-				PRODUCT_BUNDLE_IDENTIFIER = org.wordpress.AztecExample.Alpha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.taihe.test.org.wordpress.AztecExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "Aztec Example Alpha Distribution";

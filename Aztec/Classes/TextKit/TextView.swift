@@ -1,7 +1,9 @@
 import UIKit
 import Foundation
 
-
+public extension TextView {
+    static let didRedrawNotificationName: Notification.Name = Notification.Name(rawValue: "TextView.RedrawCursor")
+}
 // MARK: - TextViewAttachmentDelegate
 //
 public protocol TextViewAttachmentDelegate: class {
@@ -1217,6 +1219,8 @@ open class TextView: UITextView {
                 //
                 self.selectedRange = pristine
             }
+            
+            NotificationCenter.default.post(name: TextView.didRedrawNotificationName, object: self)
         }
     }
     
