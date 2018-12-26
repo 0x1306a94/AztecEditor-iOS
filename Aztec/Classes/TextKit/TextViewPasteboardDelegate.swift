@@ -24,6 +24,12 @@ open class AztecTextViewPasteboardDelegate: TextViewPasteboardDelegate {
             let url = UIPasteboard.general.url else {
                 return false
         }
+        #warning("输入长度限制")
+        if textView.maxLength > 0 {
+            if textView.attributedText.string.count + url.absoluteString.count > textView.maxLength {
+                return false
+            }
+        }
 
         let selectedRange = textView.selectedRange
 
@@ -45,6 +51,12 @@ open class AztecTextViewPasteboardDelegate: TextViewPasteboardDelegate {
             textView.storage.htmlConverter.isSupported(html) else {
                 return false
         }
+        #warning("输入长度限制")
+        if textView.maxLength > 0 {
+            if textView.attributedText.string.count + html.count > textView.maxLength {
+                return false
+            }
+        }
 
         textView.replace(textView.selectedRange, withHTML: html)
         return true
@@ -58,7 +70,12 @@ open class AztecTextViewPasteboardDelegate: TextViewPasteboardDelegate {
         guard let string = UIPasteboard.general.attributedString() else {
             return false
         }
-
+        #warning("输入长度限制")
+        if textView.maxLength > 0 {
+            if textView.attributedText.string.count + string.string.count > textView.maxLength {
+                return false
+            }
+        }
         let selectedRange = textView.selectedRange
         let storage = textView.storage
 
@@ -88,7 +105,13 @@ open class AztecTextViewPasteboardDelegate: TextViewPasteboardDelegate {
         guard let string = UIPasteboard.general.attributedString() else {
             return false
         }
-
+        #warning("输入长度限制")
+        if textView.maxLength > 0 {
+            if textView.attributedText.string.count + string.string.count > textView.maxLength {
+                return false
+            }
+        }
+        
         let selectedRange = textView.selectedRange
         let finalRange = NSRange(location: selectedRange.location, length: string.length)
         let originalText = textView.attributedText.attributedSubstring(from: selectedRange)

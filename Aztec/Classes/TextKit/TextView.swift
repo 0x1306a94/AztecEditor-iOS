@@ -175,6 +175,7 @@ open class TextView: UITextView {
     ///
     open var pasteboardDelegate: TextViewPasteboardDelegate = AztecTextViewPasteboardDelegate()
 
+    open var maxLength: Int = 0
     // MARK: - Customizable Input VC
     
     private var customInputViewController: UIInputViewController?
@@ -426,9 +427,10 @@ open class TextView: UITextView {
     }
 
     private func setupMenuController() {
-        let pasteAndMatchTitle = NSLocalizedString("Paste without Formatting", comment: "Paste without Formatting Menu Item")
-        let pasteAndMatchItem = UIMenuItem(title: pasteAndMatchTitle, action: #selector(pasteWithoutFormatting))
-        UIMenuController.shared.menuItems = [pasteAndMatchItem]
+        #warning("去除")
+//        let pasteAndMatchTitle = NSLocalizedString("Paste without Formatting", comment: "Paste without Formatting Menu Item")
+//        let pasteAndMatchItem = UIMenuItem(title: pasteAndMatchTitle, action: #selector(pasteWithoutFormatting))
+//        UIMenuController.shared.menuItems = [pasteAndMatchItem]
     }
 
     fileprivate lazy var recognizerDelegate: AttachmentGestureRecognizerDelegate = {
@@ -478,6 +480,9 @@ open class TextView: UITextView {
     }
 
     open override func paste(_ sender: Any?) {
+        if self.maxLength > 0 {
+
+        }
         guard pasteboardDelegate.tryPasting(in: self) else {
             super.paste(sender)
             return
@@ -1453,6 +1458,7 @@ open class TextView: UITextView {
         attachment.delegate = storage
         attachment.image = placeHolderImage
         attachment.alignment = .none
+        
         replace(at: range, with: attachment)
         return attachment
     }
