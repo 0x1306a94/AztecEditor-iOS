@@ -73,6 +73,7 @@ extension NSAttributedString {
         let swiftRange = string.range(fromUTF16NSRange: range)
         //print("[Range]: \(string.__nsRange(from: swiftRange))")
         let __swiftNSRange = string.__nsRange(from: swiftRange)
+        /// 修复swiftRange length 为0时,paragraphRange直接fatal error
         guard __swiftNSRange.length > 0 else { return [] }
         let paragraphsRange = string.paragraphRange(for: swiftRange)
         
