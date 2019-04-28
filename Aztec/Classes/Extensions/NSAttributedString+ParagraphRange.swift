@@ -1,6 +1,32 @@
 import Foundation
 import UIKit
 
+
+extension String {
+    
+    //Range转换为NSRange
+    func __nsRange(from range: Range<String.Index>) -> NSRange {
+        guard let from = range.lowerBound.samePosition(in: utf16) else { return NSRange.zero }
+        guard let to = range.upperBound.samePosition(in: utf16) else { return NSRange.zero }
+        
+        return NSRange(location: utf16.distance(from: utf16.startIndex, to: from),
+                       length: utf16.distance(from: from, to: to))
+    }
+    
+    //Range转换为NSRange
+    func __range(from nsRange: NSRange) -> Range<String.Index>? {
+        guard
+            let from16 = utf16.index(utf16.startIndex, offsetBy: nsRange.location,
+                                     limitedBy: utf16.endIndex),
+            let to16 = utf16.index(from16, offsetBy: nsRange.length,
+                                   limitedBy: utf16.endIndex),
+            let from = String.Index(from16, within: self),
+            let to = String.Index(to16, within: self)
+            else { return nil }
+        return from ..< to
+    }
+}
+
 /// Functions for paragraph enumeration and identification.
 ///
 extension NSAttributedString {
@@ -45,6 +71,9 @@ extension NSAttributedString {
     func paragraphRanges(intersecting range: NSRange) -> ([ParagraphRange]) {
         var paragraphRanges = [ParagraphRange]()
         let swiftRange = string.range(fromUTF16NSRange: range)
+        //print("[Range]: \(string.__nsRange(from: swiftRange))")
+        let __swiftNSRange = string.__nsRange(from: swiftRange)
+        guard __swiftNSRange.length > 0 else { return [] }
         let paragraphsRange = string.paragraphRange(for: swiftRange)
         
         string.enumerateSubstrings(in: paragraphsRange, options: .byParagraphs) { [unowned self] (substring, substringRange, enclosingRange, stop) in
