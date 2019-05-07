@@ -18,7 +18,7 @@ class ItalicStringAttributeConverterTests: XCTestCase {
     }
     
     func testItalicConversion() {
-        var attributes = [NSAttributedStringKey: Any]()
+        var attributes = [NSAttributedString.Key: Any]()
         
         attributes[.font] = UIFont.italicSystemFont(ofSize: 14)
         
@@ -39,7 +39,7 @@ class ItalicStringAttributeConverterTests: XCTestCase {
             ElementNode(type: .em, attributes: [exampleAttribute], children: []),
             ElementNode(type: .strong),
             ]
-        var attributes = [NSAttributedStringKey: Any]()
+        var attributes = [NSAttributedString.Key: Any]()
         
         attributes[.font] = UIFont.italicSystemFont(ofSize: 14)
         
@@ -62,7 +62,7 @@ class ItalicStringAttributeConverterTests: XCTestCase {
         let exampleAttribute = Attribute(type: .style, value: .string("someStyle"))
         let element = ElementNode(type: .em, attributes: [exampleAttribute], children: [])
         let elementRepresentation = HTMLElementRepresentation(element)
-        var attributes = [NSAttributedStringKey: Any]()
+        var attributes = [NSAttributedString.Key: Any]()
         
         attributes[.font] = UIFont.italicSystemFont(ofSize: 14)
         attributes[.italicHtmlRepresentation] = HTMLRepresentation(for: .element(elementRepresentation))
@@ -83,7 +83,7 @@ class ItalicStringAttributeConverterTests: XCTestCase {
         let exampleAttribute = Attribute(type: .style, value: .inlineCss([cssAttribute]))
         let element = ElementNode(type: .span, attributes: [exampleAttribute], children: [])
         let elementRepresentation = HTMLElementRepresentation(element)
-        var attributes = [NSAttributedStringKey: Any]()
+        var attributes = [NSAttributedString.Key: Any]()
         
         attributes[.font] = UIFont.italicSystemFont(ofSize: 14)
         attributes[.italicHtmlRepresentation] = HTMLRepresentation(for: .element(elementRepresentation))
@@ -96,5 +96,49 @@ class ItalicStringAttributeConverterTests: XCTestCase {
         XCTAssertEqual(spanElement.type, .span)
         XCTAssertEqual(spanElement.attributes.count, 1)
         XCTAssertEqual(spanElement.attributes[0], exampleAttribute)
+    }
+    
+    func testItalicConversionWithEquivalentElementRepresentation() {
+        let exampleAttribute = Attribute(type: .style, value: .string("someStyle"))
+        let element = ElementNode(type: .i, attributes: [exampleAttribute], children: [])
+        let elementRepresentation = HTMLElementRepresentation(element)
+        var attributes = [NSAttributedString.Key: Any]()
+        
+        var font = UIFont.systemFont(ofSize: 14)
+        font = font.modifyTraits([.traitItalic], enable: true)
+        
+        attributes[.font] = font
+        attributes[.italicHtmlRepresentation] = HTMLRepresentation(for: .element(elementRepresentation))
+        
+        let elementNodes = converter.convert(attributes: attributes, andAggregateWith: [])
+        
+        XCTAssertEqual(elementNodes.count, 1)
+        
+        let elementNode = elementNodes[0]
+        XCTAssertEqual(elementNode.type, .i)
+        XCTAssertEqual(elementNode.attributes.count, 1)
+        XCTAssertEqual(elementNode.attributes[0], exampleAttribute)
+    }
+    
+    func testItalicConversionWithEquivalentElementRepresentation2() {
+        let exampleAttribute = Attribute(type: .style, value: .string("someStyle"))
+        let element = ElementNode(type: .em, attributes: [exampleAttribute], children: [])
+        let elementRepresentation = HTMLElementRepresentation(element)
+        var attributes = [NSAttributedString.Key: Any]()
+        
+        var font = UIFont.systemFont(ofSize: 14)
+        font = font.modifyTraits([.traitItalic], enable: true)
+        
+        attributes[.font] = font
+        attributes[.italicHtmlRepresentation] = HTMLRepresentation(for: .element(elementRepresentation))
+        
+        let elementNodes = converter.convert(attributes: attributes, andAggregateWith: [])
+        
+        XCTAssertEqual(elementNodes.count, 1)
+        
+        let elementNode = elementNodes[0]
+        XCTAssertEqual(elementNode.type, .em)
+        XCTAssertEqual(elementNode.attributes.count, 1)
+        XCTAssertEqual(elementNode.attributes[0], exampleAttribute)
     }
 }

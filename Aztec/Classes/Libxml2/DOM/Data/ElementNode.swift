@@ -38,18 +38,10 @@ public class ElementNode: Node {
 
     // MARK: - Hashable
 
-    override public var hashValue: Int {
-        var hash = name.hashValue
-
-        for attribute in attributes {
-            hash ^= attribute.hashValue
-        }
-
-        for child in children {
-            hash ^= child.hashValue
-        }
-
-        return hash
+    override public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(attributes)
+        hasher.combine(children)
     }
 
 
@@ -136,8 +128,8 @@ public class ElementNode: Node {
     
     override func needsClosingParagraphSeparator() -> Bool {
         return (!hasChildren())
-            && (hasAttributes() || !isLastInTree())
-            && (hasRightBlockLevelSibling() || isLastInAncestorEndingInBlockLevelSeparation())
+            && (canBeLastInTree() || !isLastInTree())
+            && (isBlockLevel() || hasRightBlockLevelSibling() || isLastInAncestorEndingInBlockLevelSeparation())
     }
 
     /// Checks if the specified node requires a closing paragraph separator in itself, or in the any of its descendants.
@@ -258,6 +250,14 @@ public class ElementNode: Node {
         return false
     }
 
+    /// Check if the node can be the last one in a tree
+    ///
+    /// - Returns: Returns `true` if it can be the last one, false otherwise.
+    ///
+    func canBeLastInTree() -> Bool {
+        return hasAttributes() || type == .li
+    }
+
     /// Find out if this is a block-level element.
     ///
     /// - Returns: `true` if this is a block-level element.  `false` otherwise.
@@ -275,7 +275,7 @@ public class ElementNode: Node {
     }
 
     public func isNodeType(_ type: Element) -> Bool {
-        return type.equivalentNames.contains(name.lowercased())
+        return type.equivalentNames.contains(Element(name))
     }
     
     func hasChildren() -> Bool {

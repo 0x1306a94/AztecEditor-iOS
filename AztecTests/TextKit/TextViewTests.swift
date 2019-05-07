@@ -28,7 +28,7 @@ class TextViewTests: XCTestCase {
         let paragraph = "Lorem ipsum dolar sit amet.\n"
         let richTextView = Aztec.TextView(defaultFont: UIFont.systemFont(ofSize: 14), defaultMissingImage: UIImage())
         richTextView.textAttachmentDelegate = attachmentDelegate
-        let attributes = [NSAttributedStringKey.paragraphStyle : NSParagraphStyle()]
+        let attributes = [NSAttributedString.Key.paragraphStyle : NSParagraphStyle()]
         let templateString = NSMutableAttributedString(string: paragraph, attributes: attributes)
 
         let attrStr = NSMutableAttributedString()
@@ -819,7 +819,7 @@ class TextViewTests: XCTestCase {
         textView.selectedRange = textView.text.endOfStringNSRange()
         textView.deleteBackward()
 
-        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributes))
         XCTAssert(textView.storage.length == 0)
     }
 
@@ -859,11 +859,9 @@ class TextViewTests: XCTestCase {
     ///
     func testNewLinesGetBulletStyleEvenAfterDeletingEndOfDocumentNewline() {
         let newline = String(.lineFeed)
-
         let textView = TextViewStub(withHTML: "")
 
         textView.toggleOrderedList(range: .zero)
-
         textView.insertText(Constants.sampleText0)
 
         // Select the end of the document
@@ -898,7 +896,7 @@ class TextViewTests: XCTestCase {
         textView.toggleOrderedList(range: .zero)
         textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
 
-        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributes))
     }
 
     /// Verifies that a Text List gets removed, whenever the user types `\n` in an empty line.
@@ -922,7 +920,7 @@ class TextViewTests: XCTestCase {
             XCTAssertFalse(formatter.present(in: attributedText, at: location))
         }
 
-        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributes))
     }
 
     /// Verifies that toggling an Unordered List, when editing an empty document, inserts a Newline.
@@ -1020,7 +1018,7 @@ class TextViewTests: XCTestCase {
         textView.toggleUnorderedList(range: textView.selectedRange)
         textView.deleteBackward()
 
-        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(TextListFormatter.listsOfAnyKindPresent(in: textView.typingAttributes))
     }
 
     /// When the caret is positioned at both EoF and EoL, inserting a line separator (in most
@@ -1113,7 +1111,7 @@ class TextViewTests: XCTestCase {
 
         let formatter = BlockquoteFormatter()
 
-        XCTAssertFalse(formatter.present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(formatter.present(in: textView.typingAttributes))
         XCTAssert(textView.storage.length == 0)
     }
 
@@ -1189,7 +1187,7 @@ class TextViewTests: XCTestCase {
         textView.toggleBlockquote(range: .zero)
         textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
 
-        XCTAssertFalse(BlockquoteFormatter().present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(BlockquoteFormatter().present(in: textView.typingAttributes))
     }
 
     /// Verifies that Blockquotes get removed whenever the user types `\n` in an empty line.
@@ -1213,7 +1211,7 @@ class TextViewTests: XCTestCase {
             XCTAssertFalse(formatter.present(in: attributedText, at: location))
         }
 
-        XCTAssertFalse(formatter.present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(formatter.present(in: textView.typingAttributes))
     }
 
     /// Verifies that toggling a Blockquote, when editing an empty document, inserts a Newline.
@@ -1299,7 +1297,7 @@ class TextViewTests: XCTestCase {
 
         let formatter = PreFormatter()
 
-        XCTAssertFalse(formatter.present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(formatter.present(in: textView.typingAttributes))
         XCTAssert(textView.storage.length == 0)
     }
 
@@ -1375,7 +1373,7 @@ class TextViewTests: XCTestCase {
         textView.togglePre(range: .zero)
         textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
 
-        XCTAssertFalse(PreFormatter().present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(PreFormatter().present(in: textView.typingAttributes))
     }
 
     /// Verifies that Pre get removed whenever the user types `\n` in an empty line.
@@ -1399,7 +1397,7 @@ class TextViewTests: XCTestCase {
             XCTAssertFalse(formatter.present(in: attributedText, at: location))
         }
 
-        XCTAssertFalse(formatter.present(in: textView.typingAttributesSwifted))
+        XCTAssertFalse(formatter.present(in: textView.typingAttributes))
     }
 
     /// Verifies that toggling a Pre, when editing an empty document, inserts a Newline.
@@ -1549,7 +1547,22 @@ class TextViewTests: XCTestCase {
         XCTAssertEqual(textView.getHTML(), "<p><video src=\"newVideo.mp4\" poster=\"video.jpg\" data-wpvideopress=\"ABCDE\"></video></p>")
     }
 
+    func testParseVideoWithSourceElements() {
+        let videoHTML = "<video poster=\"video.jpg\"><source src=\"newVideo.mp4\"></video>"
+        let textView = TextViewStub(withHTML: videoHTML)
 
+        XCTAssertEqual(textView.getHTML(), "<p><video poster=\"video.jpg\"><source src=\"newVideo.mp4\"></video></p>")
+
+        guard let attachment = textView.storage.mediaAttachments.first as? VideoAttachment else {
+            XCTFail("An video attachment should be present")
+            return
+        }
+        XCTAssertEqual(attachment.sources.count, 1, "One source should be available")
+
+        XCTAssertEqual(attachment.sources[0].src, "newVideo.mp4", "Video source should match")
+
+        XCTAssertEqual(attachment.mediaURL, URL(string:"newVideo.mp4"), "Video source should match")
+    }
     // MARK: - Comments
 
     /// This test check if the insertion of a Comment Attachment works correctly and the expected tag gets inserted
@@ -1624,7 +1637,7 @@ class TextViewTests: XCTestCase {
         XCTAssertEqual(html, "<p><img src=\"https://wordpress.com\"></p>")
 
         textView.selectedRange = NSRange(location: NSAttributedString.lengthOfTextAttachment, length: 1)
-        guard let font = textView.typingAttributesSwifted[.font] as? UIFont else {
+        guard let font = textView.typingAttributes[.font] as? UIFont else {
             XCTFail("Font should be set")
             return
         }
@@ -1636,7 +1649,7 @@ class TextViewTests: XCTestCase {
         let textView = TextViewStub(font: font)
 
         textView.insertText("😘")
-        let currentTypingFont = textView.typingAttributesSwifted[.font] as! UIFont
+        let currentTypingFont = textView.typingAttributes[.font] as! UIFont
         XCTAssertEqual(currentTypingFont, font, "Font should be set to default")
     }
 
@@ -1730,6 +1743,21 @@ class TextViewTests: XCTestCase {
         let textView = TextViewStub(withSampleHTML: true)
         textView.selectedRange = textView.storage.rangeOfEntireString
         textView.cut(nil)
+    }
+
+    /// This test verifies that trying to store data in an empty pasteboard
+    /// doesn't cause Aztec to crash.
+    ///
+    func testWritingIntoAnEmptyPasteboardDoesNotCauseAztecToCrash() {
+
+        let pasteboard = UIPasteboard.general
+        pasteboard.items.removeAll()
+
+        let data = "Foo".data(using: .utf8)!
+        let textView = TextViewStub(withSampleHTML: true)
+        textView.storeInPasteboard(encoded: data, pasteboard: pasteboard)
+
+        XCTAssertEqual(pasteboard.items.count, 1)
     }
 
     /// This test verifies that Japanese Characters do not get hexa encoded anymore, since we actually support UTF8!
@@ -1913,7 +1941,9 @@ class TextViewTests: XCTestCase {
     func testAutoCompletionReplacementHackWhenUsingEmoji() {
         let textView = TextViewStub(withHTML: "Love")
         let uiTextRange = textView.textRange(from: textView.beginningOfDocument, to: textView.endOfDocument)!
-        textView.replaceRangeWithTextWithoutClosingTyping(uiTextRange, replacementText:"😘")
+        
+        textView.replace(uiTextRange, withText: "😘")
+        
         let html = textView.getHTML()
 
         XCTAssertEqual(html, "<p>😘</p>")
@@ -1963,6 +1993,27 @@ class TextViewTests: XCTestCase {
         textView.setHTML(html)
         let output = textView.getHTML(prettify: false)
         
+        XCTAssertEqual(output, expected)
+    }
+
+    /// This test makes sure that if an empty list is in the original HTML, it will still get output after our processing.
+    func testEmptyListsPersistsAfterAztec() {
+        let textView = TextViewStub(withHTML: "<ul><li></li></ul>")
+
+        let html = textView.getHTML(prettify: false)
+
+        XCTAssertEqual(html, "<ul><li></li></ul>")
+    }
+
+    func testNestedLists() {
+        let textView = TextViewStub(withHTML: "WordPress")
+
+        let html = "<ul><li>Hello</li><li>world<ul><li>Inner</li><li>Inner<ul><li>Inner2</li><li>Inner2</li></ul></li></ul></li></ul>"
+        let expected = "<ul><li>Hello</li><li>world<ul><li>Inner</li><li>Inner<ul><li>Inner2</li><li>Inner2</li></ul></li></ul></li></ul>"
+
+        textView.setHTML(html)
+        let output = textView.getHTML(prettify: false)
+
         XCTAssertEqual(output, expected)
     }
 }

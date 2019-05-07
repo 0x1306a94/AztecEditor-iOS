@@ -147,7 +147,7 @@ class AttributedStringParser {
     ///
     /// - Returns: Array of Node instances.
     ///
-    private func createNodes(from attributes: [NSAttributedStringKey: Any]) -> [Node] {
+    private func createNodes(from attributes: [NSAttributedString.Key: Any]) -> [Node] {
         let nodes = createStyleNodes(from: attributes)
 
         return nodes.reversed().reduce([]) { (result, node) in
@@ -498,9 +498,10 @@ private extension AttributedStringParser {
         let previousProperty = conversion.property
         let newProperty = newProperties[index]
 
-        // `li` tags as a rule will never merge, unless it has a `figure` as child. We want to keep all
-        // `figure` children merged inside a single `li` tag.
-        if newProperty is HTMLLi, newProperties.indices.contains(index + 1), newProperties[index + 1] is Figure {
+        // `li` tags as a rule will never merge, unless it has a `figure` or a `textlist` as child. We want to keep all
+        // `figure` and textlist` children merged inside a single `li` tag.
+        if newProperty is HTMLLi, newProperties.indices.contains(index + 1),
+            newProperties[index + 1] is Figure ||  newProperties[index + 1] is TextList {
             return newProperty === previousProperty
         } else {
             return newProperty.isEqual(previousProperty)
@@ -833,7 +834,7 @@ private extension AttributedStringParser {
     ///
     /// - Returns: Style Nodes contained within the specified collection of attributes
     ///
-    func createStyleNodes(from attributes: [NSAttributedStringKey: Any]) -> [ElementNode] {
+    func createStyleNodes(from attributes: [NSAttributedString.Key: Any]) -> [ElementNode] {
         var nodes = [ElementNode]()
 
         nodes += processUnsupportedHTML(in: attributes)
@@ -859,11 +860,11 @@ private extension AttributedStringParser {
 
     /// Extracts all of the Link Elements contained within a collection of Attributes.
     ///
-    private func processLinkStyle(in attributes: [NSAttributedStringKey: Any]) -> ElementNode? {
+    private func processLinkStyle(in attributes: [NSAttributedString.Key: Any]) -> ElementNode? {
         var urlString = ""
-        if let url = attributes[NSAttributedStringKey.link] as? URL {
+        if let url = attributes[NSAttributedString.Key.link] as? URL {
             urlString = url.absoluteString
-        } else if let link = attributes[NSAttributedStringKey.link] as? String {
+        } else if let link = attributes[NSAttributedString.Key.link] as? String {
             urlString = link
         } else {
             return nil
@@ -887,12 +888,12 @@ private extension AttributedStringParser {
 
     /// Extracts all of the Strike Elements contained within a collection of Attributes.
     ///
-    private func processStrikethruStyle(in attributes: [NSAttributedStringKey: Any]) -> ElementNode? {
-        guard attributes[NSAttributedStringKey.strikethroughStyle] != nil else {
+    private func processStrikethruStyle(in attributes: [NSAttributedString.Key: Any]) -> ElementNode? {
+        guard attributes[NSAttributedString.Key.strikethroughStyle] != nil else {
             return nil
         }
 
-        if let representation = attributes[NSAttributedStringKey.strikethroughHtmlRepresentation] as? HTMLRepresentation,
+        if let representation = attributes[NSAttributedString.Key.strikethroughHtmlRepresentation] as? HTMLRepresentation,
             case let .element(representationElement) = representation.kind {
 
             return representationElement.toElementNode()
@@ -903,7 +904,7 @@ private extension AttributedStringParser {
 
     /// Extracts all of the Code Elements contained within a collection of Attributes.
     ///
-    private func processCodeStyle(in attributes: [NSAttributedStringKey: Any]) -> ElementNode? {
+    private func processCodeStyle(in attributes: [NSAttributedString.Key: Any]) -> ElementNode? {
         guard attributes[.codeHtmlRepresentation] is HTMLRepresentation else {
             return nil
         }
@@ -913,7 +914,7 @@ private extension AttributedStringParser {
 
     /// Extracts all of the Unsupported HTML Snippets contained within a collection of Attributes.
     ///
-    private func processUnsupportedHTML(in attributes: [NSAttributedStringKey: Any]) -> [ElementNode] {
+    private func processUnsupportedHTML(in attributes: [NSAttributedString.Key: Any]) -> [ElementNode] {
         guard let unsupportedHTML = attributes[.unsupportedHtml] as? UnsupportedHTML else {
             return []
         }

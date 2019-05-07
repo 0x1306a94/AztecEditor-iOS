@@ -38,6 +38,13 @@ open class MediaAttachment: NSTextAttachment {
     ///
     fileprivate(set) public var url: URL?
 
+    // The url that represents the media source, by default is the source url
+    public var mediaURL: URL? {
+        get {
+            return url;
+        }
+    }
+
     /// Indicates if a new Asset should be retrieved, or we're current!.
     ///
     fileprivate var needsNewAsset = true
@@ -173,6 +180,12 @@ open class MediaAttachment: NSTextAttachment {
         needsNewAsset = refreshAsset
     }
 
+    /// Refresh attachment identifier
+    ///
+    /// - Parameter identifier: new identifier
+    open func refreshIdentifier(_ identifier: String = UUID().uuidString) {
+        self.identifier = identifier
+    }
 
     // MARK: - NSCoder
 
@@ -504,7 +517,7 @@ private extension MediaAttachment {
     /// Requests a new asset (asynchronously), and on completion, triggers a relayout cycle.
     ///
     private func updateImage(in textContainer: NSTextContainer?) {
-        guard let url = url else {
+        guard let url = mediaURL else {
             return
         }
 

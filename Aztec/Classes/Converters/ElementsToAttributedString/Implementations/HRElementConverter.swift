@@ -11,7 +11,7 @@ class HRElementConverter: AttachmentElementConverter {
     
     func convert(
         _ element: ElementNode,
-        inheriting attributes: [NSAttributedStringKey: Any],
+        inheriting attributes: [NSAttributedString.Key: Any],
         contentSerializer serialize: ContentSerializer) -> (attachment: NSTextAttachment, string: NSAttributedString) {
         
         precondition(element.type == .hr)
@@ -22,7 +22,10 @@ class HRElementConverter: AttachmentElementConverter {
         let attributes = combine(attributes, with: representation)
         let attachment = self.attachment(for: element)
         
-        return (attachment, NSAttributedString(attachment: attachment, attributes: attributes))
+        let intrinsicRepresentation = NSAttributedString(attachment: attachment, attributes: attributes)
+        let serialization = serialize(element, intrinsicRepresentation, attributes)
+        
+        return (attachment, serialization)
     }
     
     // MARK: - Attachment Creation
@@ -33,7 +36,7 @@ class HRElementConverter: AttachmentElementConverter {
     
     // MARK: - Additional HTMLRepresentation Logic
     
-    private func combine(_ attributes: [NSAttributedStringKey: Any], with representation: HTMLRepresentation) -> [NSAttributedStringKey : Any] {
+    private func combine(_ attributes: [NSAttributedString.Key: Any], with representation: HTMLRepresentation) -> [NSAttributedString.Key : Any] {
         var combinedAttributes = attributes
         
         combinedAttributes[.hrHtmlRepresentation] = representation

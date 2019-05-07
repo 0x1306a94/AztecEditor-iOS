@@ -72,9 +72,9 @@ public class EditorView: UIView {
                 let newText = richTextView.getHTML()
                 
                 if newText != htmlTextView.text {
-                    let originalRange = htmlTextView.textRange(from: htmlTextView.beginningOfDocument, to: htmlTextView.endOfDocument)!
+                    let range = NSRange(location: 0, length: htmlTextView.text.utf16.count)
                     
-                    htmlTextView.replace(originalRange, withText: newText)
+                    htmlTextView.replace(range, with: newText)
                 }
                 
                 htmlTextView.becomeFirstResponder()
@@ -102,6 +102,12 @@ public class EditorView: UIView {
         self.htmlTextView = htmlTextView
         self.richTextView = richTextView
         
+        if #available(iOS 11, *) {
+            htmlTextView.smartInsertDeleteType = .no
+            htmlTextView.smartDashesType = .no
+            htmlTextView.smartQuotesType = .no
+        }
+        
         super.init(coder: aDecoder)
         
         initialSetup()
@@ -117,6 +123,12 @@ public class EditorView: UIView {
         
         self.htmlTextView = UITextView(frame: .zero, textContainer: container)
         self.richTextView = TextView(defaultFont: defaultFont, defaultParagraphStyle: defaultParagraphStyle, defaultMissingImage: defaultMissingImage)
+        
+        if #available(iOS 11, *) {
+            htmlTextView.smartInsertDeleteType = .no
+            htmlTextView.smartDashesType = .no
+            htmlTextView.smartQuotesType = .no
+        }
         
         super.init(frame: .zero)
         
@@ -174,6 +186,7 @@ extension EditorView {
 // MARK: - UITextInput
 
 extension EditorView: UITextInput {
+    
     public func text(in range: UITextRange) -> String? {
         return activeView.text(in: range)
     }
@@ -186,7 +199,7 @@ extension EditorView: UITextInput {
         return activeView.markedTextRange
     }
     
-    public var markedTextStyle: [AnyHashable : Any]? {
+    public var markedTextStyle: [NSAttributedString.Key: Any]? {
         get {
             return activeView.markedTextStyle
         }
@@ -270,7 +283,7 @@ extension EditorView: UITextInput {
         return activeView.caretRect(for: position)
     }
     
-    public func selectionRects(for range: UITextRange) -> [Any] {
+    public func selectionRects(for range: UITextRange) -> [UITextSelectionRect] {
         return activeView.selectionRects(for: range)
     }
     
